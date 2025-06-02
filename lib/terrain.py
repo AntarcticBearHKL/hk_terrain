@@ -1,23 +1,45 @@
 import numpy as np
 import cv2
 
-class Terrain:
-    def __init__(self, size):
-        self.size = size
-        self.image = np.zeros((self.size, self.size), dtype=np.uint16)
-        self.heightmap = [[0 for x in range(self.size)] for y in range(self.size)]
+def empty_heightmap(size):
+    return [[0 for x in range(size)] for y in range(size)]
 
-    def get_heightmap(self):
-        return self.heightmap
+def gaussian_blur(heightmap, blur_radius):
+    if blur_radius <= 0:
+        return heightmap
+    
+    if blur_radius % 2 == 0:
+        blur_radius += 1
+    
+    size = len(heightmap)
+    image = np.zeros((size, size), dtype=np.float32)
+    
+    # 将 heightmap 转换为 numpy 数组
+    for y in range(size):
+        for x in range(size):
+            image[y][x] = heightmap[y][x]
+    
+    # 进行高斯模糊
+    blurred_image = cv2.GaussianBlur(image, (blur_radius, blur_radius), 0)
+    
+    # 将模糊结果直接写回原始 heightmap
+    for y in range(size):
+        for x in range(size):
+            heightmap[y][x] = blurred_image[y][x]
 
-    def render(self):
-        for y in range(self.size):
-            for x in range(self.size):
-                self.image[y][x] = int(self.heightmap[y][x] * 65536)
+def render_heightmap(heightmap):
+    size = len(heightmap)
+    image = np.zeros((size, size), dtype=np.uint16)
 
-        cv2.imwrite('terrain_raw.png', self.image)
+    for y in range(size):
+        for x in range(size):
+            image[y][x] = int(heightmap[y][x] * 65536)
 
-    def show_img(self):
-        cv2.imshow('Terrain', self.image)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
+    cv2.imwrite('terrain_raw.png', image)
+    
+    return image
+
+def show_img(image):
+    cv2.imshow('Terrain', image)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
