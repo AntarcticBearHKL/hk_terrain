@@ -3,7 +3,7 @@ import random
 
 
 class HydraulicErosion:
-    def __init__(self, heightmap, inertia=0.03, capacity=8, deposition=0.1, erosion=0.1, evaporation=0.02, min_slope=0.01, gravity=10, radius=32, max_path=64):
+    def __init__(self, heightmap, inertia=0.01, capacity=32, deposition=0.1, erosion=0.9, evaporation=0.02, min_slope=0.01, gravity=10, radius=32, max_path=64):
         """
         初始化水力侵蚀模拟类。
         :param heightmap: 地形高度图，list[list]格式
